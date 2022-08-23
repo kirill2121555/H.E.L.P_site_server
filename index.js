@@ -1,6 +1,6 @@
 require('dotenv').config()
 const mongoose = require('mongoose')
-const routers = require('./routers/router')
+const router = require('./routers/router')
 const PORT = process.env.PORT || 5000
 const path = require('path')
 const express = require('express')
@@ -21,7 +21,7 @@ app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
 
 
 
-app.use('/api', routers)
+app.use('/', router)
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 app.use(errorMiddleware);
