@@ -2,10 +2,10 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "indext.js",
   "scripts": {
     "start": "node indexxx.js",
-    "dev": "nodemon run index.js"
+    "dev": "nodemon run indexe.js"
   },
   "keywords": [],
   "author": "",
