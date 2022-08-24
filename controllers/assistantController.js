@@ -69,10 +69,7 @@ class AssistantController {
   async getAsistant(req, res, next) {
     try {
       const { text } = req.query
-      console.log('das')
       const asist = await assistantModel.find().sort({ datecreate: -1 });
-      console.log(asist)
-      return res.status(200).json(asist)
       if (text === '') return res.status(200).json(asist)
       if (text !== '') return res.status(200).json(find(asist, text.toLowerCase()))
     }

@@ -4,26 +4,17 @@ require('dotenv').config()
 const mongoose = require('mongoose')
 const PORT = process.env.PORT || 5000
 const path = require('path')
-
 const router = require('./routers/router')
-
 const cors = require('cors')
 const multer = require('multer')
 const cookieParser = require('cookie-parser')
 const errorMiddleware = require('./middlewares/error-middleware')
-
-
 const app = express()
-
-
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(cors({ credentials: true, origin: 'https://fronthelp.vercel.app' }));
 app.use('/images',express.static('images'))
-
-
-
 
 app.use('/', router)
 app.set('views', path.join(__dirname, 'views'));
