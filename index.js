@@ -11,7 +11,6 @@ const errorMiddleware = require('./middlewares/error-middleware')
 const { config } = require('dotenv')
 require('dotenv').config()
 
-const PORT=process.env.PORT
 
 
 const app = express()
