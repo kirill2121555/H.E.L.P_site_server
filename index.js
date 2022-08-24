@@ -28,7 +28,7 @@ app.use('/images',express.static('images'))
 app.get('/', function (req, res) {
     res.send('Hello World')
   })
-app.use('/api', router)
+//app.use('/api', router)
 app.set('views', path.join(__dirname, 'views'));
 app.use(errorMiddleware);
 const start = async () => {
