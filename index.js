@@ -10,7 +10,7 @@ const router = require('./routers/router')
 const cors = require('cors')
 const multer = require('multer')
 const cookieParser = require('cookie-parser')
-const errorMiddleware = require('/middlewares/error-middleware')
+const errorMiddleware = require('./middlewares/error-middleware')
 
 
 const app = express()
