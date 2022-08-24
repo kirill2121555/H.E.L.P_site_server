@@ -19,16 +19,13 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+app.use(cors({ credentials: true, origin: 'https://fronthelp.vercel.app' }));
 app.use('/images',express.static('images'))
 
 
 
 
-app.get('/', function (req, res) {
-    res.send('Hello World')
-  })
-//app.use('/api', router)
+app.use('/api', router)
 app.set('views', path.join(__dirname, 'views'));
 app.use(errorMiddleware);
 const start = async () => {
