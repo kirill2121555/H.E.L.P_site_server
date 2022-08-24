@@ -12,7 +12,6 @@ const { config } = require('dotenv')
 require('dotenv').config()
 
 
-
 const app = express()
 
 app.use(express.json())
