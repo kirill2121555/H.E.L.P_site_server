@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const PORT = process.env.PORT || 5000
 const path = require('path')
 const express = require('express')
-const router = require('../routers/router.js')
+const router = require('../routers/router')
 
 const cors = require('cors')
 const multer = require('multer')
