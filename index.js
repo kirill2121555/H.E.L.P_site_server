@@ -1,5 +1,4 @@
 const express = require('express')
-const app = express()
 const { config } = require('dotenv')
 require('dotenv').config()
 const mongoose = require('mongoose')
@@ -11,17 +10,19 @@ const router = require('./routers/router')
 const cors = require('cors')
 const multer = require('multer')
 const cookieParser = require('cookie-parser')
-const errorMiddleware = require('./middlewares/error-middleware')
+const errorMiddleware = require('/middlewares/error-middleware')
 
 
+const app = express()
 
 
 app.use(express.json())
-app.use('/images',express.static('images'))
-
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(cors({ credentials: true, origin: '' }));
+app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+app.use('/images',express.static('images'))
+
+
 
 
 
