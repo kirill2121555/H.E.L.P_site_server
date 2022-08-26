@@ -24,7 +24,6 @@ class AssistantController {
 
   async addAt(req, res, next) {
     try {
-      await userService.getId(req)
       if (req.file) {
         return res.status(200).json(req.file)
       }
@@ -39,9 +38,9 @@ class AssistantController {
     try {
       const id = await userService.getId(req)
       const { name, email, phone, city, description, title, pictur } = req.body;
-      const newName = undefined;
+      let newName=undefined;
       if (pictur !== undefined) {
-        newName = await assistantService.renameFile(pictur)
+        newName =await assistantService.renameFile(pictur)
       }
       const asist = await assistantModel.create({
         name: name,
@@ -54,8 +53,10 @@ class AssistantController {
         picture: newName,
         autorid:id
       })
-      await asist.save();
       const user = await userModel.findById(id)
+      if(!user){
+        return res.status(400).json('Error')
+      }
       await user.assist.push(asist._id)
       await user.save()
       return res.status(200).json({ message: "Пост добавлен" })
