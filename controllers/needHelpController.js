@@ -4,6 +4,8 @@ const assistantModel = require('../models/assistantModel');
 const userService = require("../services/userService");
 const userModel = require("../models/userModel");
 const logger = require('./../loger/loger')
+const qrcreate=require('./../services/commonFunction')
+
 
 
 const find = (pointHelp, text) => {
@@ -29,7 +31,8 @@ class AssistantController {
         city: city,
         listThings: listThings,
         description: description,
-        alltext: description + listThings + city + phone + secondName + name
+        alltext: description + listThings + city + phone + secondName + name,
+        autorid:id
       })
       if (!asist) {
         return res.status(400).json({ message: "не удалост создать " })
@@ -103,7 +106,8 @@ class AssistantController {
     try {
       const id = req.params.id;
       const OneNeedHelp = await needHelpModel.findById(id);
-      return res.status(200).json(OneNeedHelp)
+      const qrcode = await qrcreate.code(process.env.HOST+'/nh/'+OneNeedHelp._id)
+      return res.status(200).json([OneNeedHelp,qrcode])
     } catch (e) {
       logger.error('Error in getOneNeedHelp function');
       return res.status(400).json('error')

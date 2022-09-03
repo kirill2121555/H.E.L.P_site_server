@@ -59,7 +59,7 @@ router.post('/addAsistant',
     authMiddleware,
     assistantController.addAsistant)
 
-router.post('/upload', fileMideeleware.single('avatar'), assistantController.addAt)
+router.post('/upload', fileMideeleware.single('picture'), assistantController.addAt)
 
 router.post('/deleteneedhelp', authMiddleware, needHelpController.deleteneedhelp)
 router.post('/addNeedHelp',
@@ -131,7 +131,23 @@ router.post('/addComment/:id',
 router.get('/getComment/:id', commentController.GetComments)
 router.post('/grade/:id', authMiddleware, commentController.grade)
 router.post('/getmark/:id', authMiddleware, commentController.getmark)
-router.get('/getDialog', userController.getDialog);
-router.get('/allDialogs', userController.allDialogs);
+router.get('/getDialog',authMiddleware, userController.getDialog);
+router.get('/allDialogs',authMiddleware, userController.allDialogs);
+router.get('/generalchatinformation',authMiddleware, userController.generalchatinformation);
+
+router.get('/generalchat',authMiddleware, userController.Generalchat);
+
+router.get('/ProfileInformation',authMiddleware,userController.ProfileInformation);
+router.post('/changeNick',authMiddleware,userController.changeNick);
+router.post('/changeEmail',authMiddleware,userController.changeEmail);
+router.post('/changePassword',authMiddleware,userController.changePassword);
+
+router.post('/sendAnswer',authMiddleware,commentController.sendAnswer);
+
+//router.post('/setavatar', fileMideeleware.single('avatar'), assistantController.addAt)
+router.post('/changeavatar',authMiddleware,userController.changeAvatar);
+
+
+
 
 module.exports = router

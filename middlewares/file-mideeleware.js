@@ -1,4 +1,5 @@
 const multer=require('multer')
+const moment =require('moment')
 
 const storage = multer.diskStorage ({
     destination: (req,file,cb) => {
@@ -6,6 +7,7 @@ const storage = multer.diskStorage ({
     },
     filename: (req, file, cb) => {
         const filename=file.originalname
+        console.log('filenameeeeee!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!+=======+++====     ',filename)
         cb(null,filename)
     },
 });

@@ -3,6 +3,7 @@ const userModel = require('../models/userModel')
 const pointHelpModel = require('../models/pointHelpModel');
 const mailService = require("../services/mail-service");
 const logger = require('./../loger/loger')
+const qrcreate=require('./../services/commonFunction')
 
 const find = (pointHelp, text) => {
   const a = []
@@ -17,6 +18,7 @@ const find = (pointHelp, text) => {
 class PointHelpController {
   async addPointHelp(req, res, next) {
     try {
+      const id = await userService.getId(req)
       const { name, nameBoss, email, phone, region, address, city, listThings, description } = req.body;
       const asist = await pointHelpModel.create({
         name: name,
@@ -32,6 +34,7 @@ class PointHelpController {
         like: 0,
         dislike: 0,
         alltext: listThings + description + region + city + address + name + email + phone + nameBoss + name,
+        autorid: id
       })
       if (!asist) {
         return  res.status(400).json({ message: "Не удалось создать пост" })
@@ -76,7 +79,8 @@ class PointHelpController {
       const id = req.params.id;
       const pointHelp = await pointHelpModel.findByIdAndUpdate(id);
       await pointHelp.updateOne({ views: pointHelp.views + 1 })
-      return  res.status(200).json(pointHelp)
+      const qrcode = await qrcreate.code(process.env.HOST+'/gum/'+pointHelp._id)
+      return  res.status(200).json([pointHelp,qrcode])
     } catch (error) {
       logger.error('Error in getOnePointHelp function');
       return res.status(400).json('Error')

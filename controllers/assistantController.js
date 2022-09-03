@@ -5,6 +5,8 @@ const userService = require('./../services/userService')
 const jwt = require('jsonwebtoken');
 const fileMideeleware = require("../middlewares/file-mideeleware");
 const logger = require('./../loger/loger')
+const qrcreate=require('./../services/commonFunction')
+
 
 
 const find = (pointHelp, text) => {
@@ -37,11 +39,8 @@ class AssistantController {
   async addAsistant(req, res, next) {
     try {
       const id = await userService.getId(req)
-      const { name, email, phone, city, description, title, pictur } = req.body;
-      let newName=undefined;
-      if (pictur !== undefined) {
-        newName =await assistantService.renameFile(pictur)
-      }
+      const { name, email, phone, city, description, title, namefile } = req.body;
+      console.log('pppp     =   ',namefile)
       const asist = await assistantModel.create({
         name: name,
         email: email,
@@ -50,7 +49,7 @@ class AssistantController {
         description: description,
         title: title,
         alltext: email + phone + city + description + title,
-        picture: newName,
+        picture: namefile,
         autorid:id
       })
       const user = await userModel.findById(id)
@@ -85,7 +84,8 @@ class AssistantController {
     try {
       const id = req.params.id;
       const assistant = await assistantModel.findById(id);
-      return res.status(200).json(assistant)
+      const qrcode = await qrcreate.code(process.env.HOST+'/ch/'+assistant._id)
+      return res.status(200).json([assistant,qrcode])
     } catch (e) {
       logger.error('Error in getOneAsistant function');
       return res.status(400).json('Error')

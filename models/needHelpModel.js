@@ -9,6 +9,8 @@ const NeedHelpSchema=new Schema({
     description:{type:String},
     datecreate:{type:Date,default: Date.now},
     alltext:{type:String,lowercase: true},
+    autorid:{type:Schema.Types.ObjectId, ref:'User'},
+
 })
 
 module.exports=model('NeedHelp',NeedHelpSchema);

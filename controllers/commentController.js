@@ -27,6 +27,24 @@ class CommentController {
             logger.error('Error in CreateComment function');
             return res.status(400).json('problem with create comment')
         }
+    }
+
+
+    async sendAnswer(req, res) {
+        const { commentId, text } = req.body;
+        console.log('id ',commentId,  '    text    ',text )
+        const id = await userService.getId(req)
+        const user = await userModel.findById(id)
+        const comment = await commentModel.findById(commentId)
+        const asn = await commentModel.create({
+            user: id,
+            usernick: user.nick,
+            text: text,
+        })
+        await comment.answers.push(asn._id)
+        comment.save()
+        //        console.log('comment  ', comment)
+
 
     }
     async GetComments(req, res, next) {
@@ -34,9 +52,29 @@ class CommentController {
             const idPH = req.params.id;
             const postHelp = await pointHelpModel.findById(idPH)
             const comments = []
+            let d
+
             for (let i = 0; i < postHelp.comment.length; i++) {
-                comments.push(await commentModel.findById(postHelp.comment[i]))
+                d = await commentModel.findById(postHelp.comment[i])
+                let arr = []
+
+                if (d?.answers.length > 0) {
+
+                    for (let j = 0; j < d.answers.length; j++) {
+                        const aaa = await commentModel.findById(d.answers[j])
+                        let a = {}
+                        a.usernick = aaa.usernick
+                        a.timeOfCreation = aaa.timeOfCreation
+                        a.text = aaa.text
+                        arr.push(a)
+
+                    }
+                    //console.log(arr)
+
+                }
+                comments.push([d, arr])
             }
+            console.log(comments)
             return res.status(200).json(comments.sort((x, y) => y.timeOfCreation - x.timeOfCreation))
         } catch (error) {
             logger.error('Error in GetComments function');
