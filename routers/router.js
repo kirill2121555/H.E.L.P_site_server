@@ -12,6 +12,7 @@ const fileMideeleware = require('../middlewares/file-mideeleware');
 const rolemoderMiddelware = require('../middlewares/rolemoder-middelware');
 const validationMiddlevare = require('../middlewares/validation-middlevare');
 const { validationResult } = require('express-validator');
+const blogController = require('../controllers/blogController');
 
 router.post('/registration',
     body('nick').isLength({ min: 3, max: 15 }).withMessage('Nick length must be between 3 and 15'),
@@ -121,14 +122,14 @@ router.post('/requesetaddPointHelp',
     authMiddleware,
     pointHelpController.requesetaddPointHelp)
 
-router.post('/addComment/:id',
+router.post('/addComment',
     body('text').notEmpty().withMessage('Email entered incorrectly'),
     body('timeCreate').notEmpty().withMessage('Can not be empty'),
     validationMiddlevare,
     authMiddleware,
     commentController.CreateComment)
 
-router.get('/getComment/:id', commentController.GetComments)
+router.get('/getComment', commentController.GetComments)
 router.post('/grade/:id', authMiddleware, commentController.grade)
 router.post('/getmark/:id', authMiddleware, commentController.getmark)
 router.get('/getDialog',authMiddleware, userController.getDialog);
@@ -148,6 +149,11 @@ router.post('/sendAnswer',authMiddleware,commentController.sendAnswer);
 router.post('/changeavatar',authMiddleware,userController.changeAvatar);
 
 
+router.get('/getposts', pointHelpController.getposts);
 
+
+router.post('/blogpost',authMiddleware,blogController.postblogpost);
+router.get('/blogpost',blogController.getblogpost);
+router.get('/oneblogpost',blogController.getoneblogpost);
 
 module.exports = router

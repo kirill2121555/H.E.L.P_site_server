@@ -3,7 +3,9 @@ const userModel = require('../models/userModel')
 const pointHelpModel = require('../models/pointHelpModel');
 const mailService = require("../services/mail-service");
 const logger = require('./../loger/loger')
-const qrcreate=require('./../services/commonFunction')
+const qrcreate = require('./../services/commonFunction');
+const needHelpModel = require("../models/needHelpModel");
+const assistantModel = require("../models/assistantModel");
 
 const find = (pointHelp, text) => {
   const a = []
@@ -37,7 +39,7 @@ class PointHelpController {
         autorid: id
       })
       if (!asist) {
-        return  res.status(400).json({ message: "Не удалось создать пост" })
+        return res.status(400).json({ message: "Не удалось создать пост" })
       }
       return res.status(200).json({ message: "Пост добавлен" })
     } catch (e) {
@@ -66,7 +68,7 @@ class PointHelpController {
           break;
       }
       if (text === '') return res.status(200).json(pointHelp)
-      if (text !== '') return res.status(200).json(find(pointHelp, text.toLowerCase())) 
+      if (text !== '') return res.status(200).json(find(pointHelp, text.toLowerCase()))
     }
     catch (e) {
       logger.error('Error in getAllPointHelp function');
@@ -79,8 +81,8 @@ class PointHelpController {
       const id = req.params.id;
       const pointHelp = await pointHelpModel.findByIdAndUpdate(id);
       await pointHelp.updateOne({ views: pointHelp.views + 1 })
-      const qrcode = await qrcreate.code(process.env.HOST+'/gum/'+pointHelp._id)
-      return  res.status(200).json([pointHelp,qrcode])
+      const qrcode = await qrcreate.code(process.env.HOST + '/gum/' + pointHelp._id)
+      return res.status(200).json([pointHelp, qrcode])
     } catch (error) {
       logger.error('Error in getOnePointHelp function');
       return res.status(400).json('Error')
@@ -99,7 +101,24 @@ class PointHelpController {
       return res.status(400).json('Error')
     }
   }
+  async getposts(req, res) {
+    try {
+      console.log('aaaa')
 
+      let a, b, c
+      console.log('aaaa')
+      await Promise.all([
+        a = await pointHelpModel.find().sort({ _id: -1 }).limit(1).lean(),
+        b = await assistantModel.find().sort({ _id: -1 }).limit(1).lean(),
+        c = await needHelpModel.find().sort({ _id: -1 }).limit(1).lean()
+      ])
+      return res.status(200).json([a,b,c])
+
+    } catch (e) {
+      logger.error('Error in getposts function');
+      return res.status(400).json('Error')
+    }
+  }
 }
 
 module.exports = new PointHelpController();
