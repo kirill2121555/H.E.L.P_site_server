@@ -8,23 +8,20 @@ const { getId } = require('../services/userService');
 const blogModel = require('../models/blogModel');
 
 class CommentController {
+    
     async CreateComment(req, res) {
         try {
             const { text, timeCreate, typepost } = req.body
             const idPH = req.body.id;
             const id = await userService.getId(req)
             const user = await userModel.findById(id)
-
             const newcomment = await commentModel.create({
                 user: user._id,
                 usernick: user.nick,
                 text: text,
                 timeOfCreation: timeCreate
             })
-            console.log(newcomment)
-
             let postcomment
-
             switch (typepost) {
                 case 'pointHelp':
                     postcomment = await pointHelpModel.findById(idPH)
@@ -32,7 +29,6 @@ class CommentController {
                 case 'blogpost':
                     postcomment = await blogModel.findById(idPH)
                     console.log(postcomment)
-
                     break;
             }
             await postcomment.comment.push(newcomment._id)
@@ -44,28 +40,29 @@ class CommentController {
         }
     }
 
-
     async sendAnswer(req, res) {
-        const { commentId, text } = req.body;
-        console.log('id ', commentId, '    text    ', text)
-        const id = await userService.getId(req)
-        const user = await userModel.findById(id)
-        const comment = await commentModel.findById(commentId)
-        const asn = await commentModel.create({
-            user: id,
-            usernick: user.nick,
-            text: text,
-        })
-        await comment.answers.push(asn._id)
-        comment.save()
-
-
+        try {
+            const { commentId, text } = req.body;
+            const id = await userService.getId(req)
+            const user = await userModel.findById(id)
+            const comment = await commentModel.findById(commentId)
+            const asn = await commentModel.create({
+                user: id,
+                usernick: user.nick,
+                text: text,
+            })
+            await comment.answers.push(asn._id)
+            comment.save()
+        } catch (e) {
+            logger.error('Error in sendAnswer function');
+            return res.status(400).json('problem with create Answer on comment')
+        }
     }
-    async GetComments(req, res, next) {
+
+    async GetComments(req, res) {
         try {
             const idPH = req.query.id;
             const typepost = req.query.type;
-            console.log(typepost,idPH)
             let postcomment
             switch (typepost) {
                 case 'pointHelp':
@@ -77,13 +74,10 @@ class CommentController {
             }
             const comments = []
             let d
-
             for (let i = 0; i < postcomment.comment.length; i++) {
                 d = await commentModel.findById(postcomment.comment[i])
                 let arr = []
-
                 if (d?.answers.length > 0) {
-
                     for (let j = 0; j < d.answers.length; j++) {
                         const aaa = await commentModel.findById(d.answers[j])
                         let a = {}
@@ -91,9 +85,7 @@ class CommentController {
                         a.timeOfCreation = aaa.timeOfCreation
                         a.text = aaa.text
                         arr.push(a)
-
                     }
-
                 }
                 comments.push([d, arr])
             }
@@ -104,7 +96,7 @@ class CommentController {
         }
     }
 
-    async grade(req, res, next) {
+    async grade(req, res) {
         try {
             const iduser = await userService.getId(req)
             const id = req.params.id
@@ -137,7 +129,7 @@ class CommentController {
         }
     }
 
-    async getmark(req, res, next) {
+    async getmark(req, res) {
         try {
             const iduser = await userService.getId(req)
             const id = req.params.id

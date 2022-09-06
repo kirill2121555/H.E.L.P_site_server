@@ -13,7 +13,7 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));//   http://localhost:3000 https://fronthelp.vercel.app
+app.use(cors({ credentials: true, origin: 'https://fronthelp.vercel.app' }));//   http://localhost:3000 https://fronthelp.vercel.app
 app.use('/images',express.static('images'))
 
 app.use('/api', router)
