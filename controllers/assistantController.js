@@ -5,8 +5,9 @@ const userService = require('./../services/userService')
 const jwt = require('jsonwebtoken');
 const fileMideeleware = require("../middlewares/file-mideeleware");
 const logger = require('./../loger/loger')
-const qrcreate=require('./../services/commonFunction')
-
+const qrcreate = require('./../services/commonFunction')
+const NodeCache = require("node-cache");
+const myCache = require('./../cache/cache')
 
 
 const find = (pointHelp, text) => {
@@ -40,7 +41,7 @@ class AssistantController {
     try {
       const id = await userService.getId(req)
       const { name, email, phone, city, description, title, namefile } = req.body;
-      console.log('pppp     =   ',namefile)
+      console.log('pppp     =   ', namefile)
       const asist = await assistantModel.create({
         name: name,
         email: email,
@@ -50,10 +51,10 @@ class AssistantController {
         title: title,
         alltext: email + phone + city + description + title,
         picture: namefile,
-        autorid:id
+        autorid: id
       })
       const user = await userModel.findById(id)
-      if(!user){
+      if (!user) {
         return res.status(400).json('Error')
       }
       await user.assist.push(asist._id)
@@ -68,8 +69,14 @@ class AssistantController {
 
   async getAsistant(req, res, next) {
     try {
+      let asist
       const { text } = req.query
-      const asist = await assistantModel.find().sort({ datecreate: -1 });
+
+      if (myCache.has('asist')) asist = myCache.get('asist')
+      else {
+        asist = await assistantModel.find().sort({ datecreate: -1 }).lean();
+        myCache.set(`asist`, asist)
+      }
       if (text === '') return res.status(200).json(asist)
       if (text !== '') return res.status(200).json(find(asist, text.toLowerCase()))
     }
@@ -84,8 +91,8 @@ class AssistantController {
     try {
       const id = req.params.id;
       const assistant = await assistantModel.findById(id);
-      const qrcode = await qrcreate.code(process.env.HOST+'/ch/'+assistant._id)
-      return res.status(200).json([assistant,qrcode])
+      const qrcode = await qrcreate.code(process.env.HOST + '/ch/' + assistant._id)
+      return res.status(200).json([assistant, qrcode])
     } catch (e) {
       logger.error('Error in getOneAsistant function');
       return res.status(400).json('Error')
@@ -95,11 +102,8 @@ class AssistantController {
   async getAsistPerson(req, res, next) {
     try {
       const id = await userService.getId(req)
-
       const a = []
-    
       const user = await userModel.findById(id)
-
       for (let i = 0; i < user.assist.length; i++) {
         const asist = await assistantModel.findById(user.assist[i])
         if (asist != null) {

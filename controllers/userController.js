@@ -134,8 +134,7 @@ class UserController {
   async getRole(req, res) {
     try {
       const userId = await userService.getId(req)
-      const user = await userModel.findById(userId)
-      console.log('getRole    ' + user.role)
+      const user = await userModel.findById(userId).lean()
       return res.json(user.role)
     } catch (e) {
       logger.error('Error in getRole function');
@@ -211,7 +210,7 @@ class UserController {
   async ProfileInformation(req, res) {
     try {
       const userId = await userService.getId(req)
-      const data = await userModel.findById(userId, 'email nick');
+      const data = await userModel.findById(userId, 'email nick').lean();
       return res.status(200).json(data)
     } catch (e) {
       logger.error('Error in ProfileInformation function');

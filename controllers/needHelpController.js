@@ -5,8 +5,7 @@ const userService = require("../services/userService");
 const userModel = require("../models/userModel");
 const logger = require('./../loger/loger')
 const qrcreate=require('./../services/commonFunction')
-
-
+const myCache = require('./../cache/cache')
 
 const find = (pointHelp, text) => {
   const a = []
@@ -74,7 +73,12 @@ class AssistantController {
   async getAllNeedHelp(req, res, next) {
     try {
       const { text } = req.query
-      let allNeedHelp = await needHelpModel.find().sort({ datecreate: -1 });
+      let allNeedHelp
+      if (myCache.has('allNeedHelp')) allNeedHelp = myCache.get('allNeedHelp')
+      else {
+        allNeedHelp = await needHelpModel.find().sort({ datecreate: -1 }).lean();
+        myCache.set(`allNeedHelp`, allNeedHelp)
+      }
       if (text === '') return res.status(200).json(allNeedHelp)
       if (text !== '') return res.status(200).json(find(allNeedHelp, text.toLowerCase()))
     }

@@ -145,9 +145,7 @@ router.post('/changePassword',authMiddleware,userController.changePassword);
 
 router.post('/sendAnswer',authMiddleware,commentController.sendAnswer);
 
-//router.post('/setavatar', fileMideeleware.single('avatar'), assistantController.addAt)
 router.post('/changeavatar',authMiddleware,userController.changeAvatar);
-
 
 router.get('/getposts', pointHelpController.getposts);
 
@@ -155,5 +153,6 @@ router.get('/getposts', pointHelpController.getposts);
 router.post('/blogpost',authMiddleware,blogController.postblogpost);
 router.get('/blogpost',blogController.getblogpost);
 router.get('/oneblogpost',blogController.getoneblogpost);
+
 
 module.exports = router

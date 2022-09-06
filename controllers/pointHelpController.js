@@ -6,6 +6,7 @@ const logger = require('./../loger/loger')
 const qrcreate = require('./../services/commonFunction');
 const needHelpModel = require("../models/needHelpModel");
 const assistantModel = require("../models/assistantModel");
+const myCache = require('./../cache/cache')
 
 const find = (pointHelp, text) => {
   const a = []
@@ -52,19 +53,19 @@ class PointHelpController {
     try {
       const { sort } = req.query
       const { text } = req.query
-      let pointHelp
+      let pointHelp 
       switch (sort) {
         case 'like':
-          pointHelp = await pointHelpModel.find().sort({ like: -1 });
+          pointHelp = await pointHelpModel.find().sort({ like: -1 }).lean();
           break;
         case 'views':
-          pointHelp = await pointHelpModel.find().sort({ views: -1 });
+          pointHelp = await pointHelpModel.find().sort({ views: -1 }).lean();
           break;
         case 'date':
-          pointHelp = await pointHelpModel.find().sort({ datecreate: -1 });
+          pointHelp = await pointHelpModel.find().sort({ datecreate: -1 }).lean();
           break;
         default:
-          pointHelp = await pointHelpModel.find();
+          pointHelp = await pointHelpModel.find().lean();
           break;
       }
       if (text === '') return res.status(200).json(pointHelp)
@@ -112,7 +113,7 @@ class PointHelpController {
         b = await assistantModel.find().sort({ _id: -1 }).limit(1).lean(),
         c = await needHelpModel.find().sort({ _id: -1 }).limit(1).lean()
       ])
-      return res.status(200).json([a,b,c])
+      return res.status(200).json([a, b, c])
 
     } catch (e) {
       logger.error('Error in getposts function');

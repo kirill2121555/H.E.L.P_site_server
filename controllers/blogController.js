@@ -2,8 +2,8 @@ const blogModel = require('../models/blogModel');
 const userModel = require('../models/blogModel');
 const userService = require('../services/userService');
 const logger = require('./../loger/loger')
-const NodeCache = require( "node-cache" );
-const myCache = new NodeCache();
+const myCache = require('./../cache/cache')
+
 
 class BlogController {
     async postblogpost(req, res) {
@@ -25,8 +25,12 @@ class BlogController {
 
     async getblogpost(req, res) {
         try {
-            const post = await blogModel.find({}, { title: 1, text: 1, _id: 1, datacreate: 1 }).lean()
-            console.log(post)
+            let post
+            if (myCache.has('blogpost')) post = myCache.get('blogpost')
+            else {
+                post = await blogModel.find({}, { title: 1, text: 1, _id: 1, datacreate: 1 }).lean()
+                myCache.set(`blogpost`, post)
+            }
             return res.status(200).json(post)
         } catch (e) {
             logger.error('Error in getblogpost function');
@@ -44,6 +48,7 @@ class BlogController {
             return res.status(400).json('Error')
         }
     }
+    
 
 }
 
