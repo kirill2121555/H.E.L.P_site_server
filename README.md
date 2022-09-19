@@ -9,10 +9,10 @@
 
 
 Используемые технологии:                   
--Node.js 
--JavaScript
--Express
--Mongo.db
--Socket.io                 
+-Node.js                  
+-JavaScript              
+-Express                                   
+-Mongo.db                     
+-Socket.io                                              
 
 Ссылка на сайт: https://fronthelp.vercel.app/
